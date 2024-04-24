@@ -3,7 +3,7 @@
 	This question requires you to use a stack to achieve a bracket match
 */
 
-// I AM NOT DONE
+
 #[derive(Debug)]
 struct Stack<T> {
 	size: usize,
@@ -32,7 +32,9 @@ impl<T> Stack<T> {
 	}
 	fn pop(&mut self) -> Option<T> {
 		// TODO
-		None
+		self.size -= 1;
+		self.data.pop()
+		// None
 	}
 	fn peek(&self) -> Option<&T> {
 		if 0 == self.size {
@@ -102,6 +104,68 @@ impl<'a, T> Iterator for IterMut<'a, T> {
 fn bracket_match(bracket: &str) -> bool
 {
 	//TODO
+
+	let mut st: Stack<char> = Stack::new();
+
+	for i in bracket.chars() {
+		if i == '(' {
+			st.push('(');
+		} else if i == '[' {
+			st.push('[');
+		} else if i == '{' {
+			st.push('{');
+		} else if i == ')' {
+			match st.peek() {
+				Some(t) => {
+					if *t != '(' {
+						return false;
+					}
+					st.pop();
+				},
+				None => return false,
+			}
+		} else if i == ']' {
+			match st.peek() {
+				Some(t) => {
+					if *t != '[' {
+						return false;
+					}
+					st.pop();
+				},
+				None => return false,
+			}
+		} else if i == '}' {
+			match st.peek() {
+				Some(t) => {
+					if *t != '{' {
+						return false;
+					}
+					st.pop();
+				},
+				None => return false,
+			}
+		}
+	}
+	if st.size !=0 {
+		return false;
+	}
+
+	// fn bracket_match(bracket: &str) -> bool {
+	// 	let mut st: Vec<char> = Vec::new();
+	
+	// 	for i in bracket.chars() {
+	// 		match i {
+	// 			'(' | '[' | '{' => st.push(i),
+	// 			')' if st.pop() != Some('(') => return false,
+	// 			']' if st.pop() != Some('[') => return false,
+	// 			'}' if st.pop() != Some('{') => return false,
+	// 			_ => (),
+	// 		}
+	// 	}
+	
+	// 	st.is_empty()
+	// }
+	
 	true
 }
 

@@ -2,7 +2,7 @@
 	single linked list merge
 	This problem requires you to merge two ordered singly linked lists into one ordered singly linked list
 */
-// I AM NOT DONE
+
 
 use std::fmt::{self, Display, Formatter};
 use std::ptr::NonNull;
@@ -29,13 +29,17 @@ struct LinkedList<T> {
     end: Option<NonNull<Node<T>>>,
 }
 
-impl<T> Default for LinkedList<T> {
+impl<T: std::cmp::PartialOrd + Clone> Default for LinkedList<T> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl<T> LinkedList<T> {
+fn print_type_of<T>(_: &T) {
+    println!("{}", std::any::type_name::<T>())
+}
+
+impl<T: std::cmp::PartialOrd + Clone> LinkedList<T> {
     pub fn new() -> Self {
         Self {
             length: 0,
@@ -72,11 +76,47 @@ impl<T> LinkedList<T> {
 	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
 	{
 		//TODO
-		Self {
-            length: 0,
-            start: None,
-            end: None,
+        let mut merged_list = LinkedList::new();
+        let mut current_a = list_a.start;
+        let mut current_b = list_b.start;
+
+        while let (Some(ptr_a), Some(ptr_b)) = (current_a, current_b) {
+            let val_a;
+            let val_b;
+            unsafe {
+                val_a = &(*ptr_a.as_ptr()).val;
+                val_b = &(*ptr_b.as_ptr()).val;
+            }
+            if val_a <= val_b {
+                merged_list.add(val_a.clone());
+                current_a = unsafe { (*ptr_a.as_ptr()).next };
+            } else {
+                merged_list.add(val_b.clone());
+                current_b = unsafe { (*ptr_b.as_ptr()).next };
+            }
         }
+
+        
+        while let Some(ptr_a) = current_a {
+            let val_a;
+            unsafe {
+                val_a = &(*ptr_a.as_ptr()).val;
+            }
+            merged_list.add(val_a.clone());
+            current_a = unsafe { (*ptr_a.as_ptr()).next };
+        }
+
+        
+        while let Some(ptr_b) = current_b {
+            let val_b;
+            unsafe {
+                val_b = &(*ptr_b.as_ptr()).val;
+            }
+            merged_list.add(val_b.clone());
+            current_b = unsafe { (*ptr_b.as_ptr()).next };
+        }
+
+        merged_list
 	}
 }
 
